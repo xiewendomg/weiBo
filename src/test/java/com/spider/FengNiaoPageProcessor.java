@@ -24,16 +24,14 @@ public class FengNiaoPageProcessor implements PageProcessor {
 
     @Override
     public void process(Page page) {
-        System.out.print(page.getUrl()+"======================");
         //抓取的url是否与URL_LIST匹配
-        System.out.println(page.getHtml());
+        System.out.println(page.getHtml().xpath("//div[@class='bbsListAll bbsList  module1200 yinying clearfix']/ul[@class='txtList']/").all());
         if (page.getUrl().regex(URL_LIST).match()) {
             /*addTargetRequests,添加url 去抓取
              * page.getHtml(),获取当前页内容，返回html对象，html类继承AbstractSelectable类
              *xpath（“”）使用xpath选择器。爬取列表返回所有links（）
              *
              * */
-
             page.addTargetRequests(page.getHtml().xpath("//div[@class=\"articleList\"]").links().regex(URL_POST).all());
             page.addTargetRequests(page.getHtml().links().regex(URL_LIST).all());
             System.out.print(page.getHtml().xpath("//div[@class=\"articleList\"]").links().regex(URL_POST));
