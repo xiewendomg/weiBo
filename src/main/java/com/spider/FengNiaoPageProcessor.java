@@ -31,8 +31,8 @@ public class FengNiaoPageProcessor implements PageProcessor {
     private static String BBG_NEWTOPICON = "i[@class='bBg newTopIcon']/text()";
     private static String BBS_FENGNIAO = "http://bbs.fengniao.com";
     private static String INVITATION_URL = "http://bbs\\.fengniao\\.com/forum/\\d+\\.html";
-
-    private static String FIRST_IMG_REGEX = "^/forum/pic/\\w+\\.html";
+    // https://bbs.qn.img-space.com/201901/8/e2be344c39b54704a4f1ee0b2cdf0d14.jpg
+    private static String FIRST_IMG_REGEX = "^https://bbs\\.qn\\.img-space\\.com/\\d+/\\d+/\\w+\\.jpg";
 
     private Site site = Site
             .me()
@@ -55,23 +55,19 @@ public class FengNiaoPageProcessor implements PageProcessor {
         if (page.getUrl().regex(INVITATION_URL).match()) {
             String title = page.getHtml().xpath("//div[@class='titleBox module1200']/h3/text()").get();
             System.out.println(title);
-            listImg(page.getHtml().xpath("//div[@class='img']/a/@href").regex(FIRST_IMG_REGEX).all());
+            listImg(title,page.getHtml().xpath("//img/@src").regex(FIRST_IMG_REGEX).all());
         }
 
     }
 
-    private void listImg(List<String> list) {
+    private void listImg(String title,List<String> list) {
         int i=0;
         System.out.println(list);
         for (String string : list) {
-//            Page page = downloader.download(new Request(BBS_FENGNIAO+string), spider);
-            Page page = downloader.download(new Request("http://bbs.fengniao.com/forum/pic/slide_125_10631458_92868674.html"), spider);
-            String link = page.getHtml().xpath("//div[@class='iconBox']/a[@class='downPic bigPicBg']/@href").get();
-            System.out.println(link);
             URL url = null;
             URLConnection con = null;
             try {
-                url = new URL("https://bbs.qn.img-space.com/201901/6/1715b3269507ace95188ac5c091b0014.jpg");
+                url = new URL(string);
                 con = url.openConnection();
                 InputStream inStream = con.getInputStream();
                 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
